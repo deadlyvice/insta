@@ -1,47 +1,43 @@
-import { FastifyInstance } from 'fastify';
-
-const mockUser = {
-    id: 0,
-    name: 'mock',
-    email: 'mock@example.com',
-    nickname: 'mock',
-};
-// import { UserService } from './user.service';
-// import { createUserSchema, userResponseSchema } from './user.schemas';
+import { FastifyInstance } from 'fastify'
+import { UserRepository } from './user.repository'
+import { db } from '../../config/db'
 
 export async function userRoutes(app: FastifyInstance) {
-//   const service = new UserService();
+	const usersRepo = new UserRepository(db)
 
-  app.get('/', {
-    
-    schema: {
-    //   response: { 200: { type: 'array', items: userResponseSchema } },
-    },
-    handler: async (req, res) => {
-    //   const users = await service.getAll();
-    //   return users;
-    return mockUser
-    },
-  });
+	app.get('/', {
+		schema: {},
+		handler: async (req, res) => {
+			const users = await usersRepo.readAll()
+			res.send(users)
+		},
+	})
 
-  app.post('/', {
-    // schema: { body: createUserSchema, response: { 201: userResponseSchema } },
-    handler: async (req, res) => {
-    //   const user = await service.create(req.body);
-      res.code(201).send(mockUser);
-    }
-    
-  });
+	app.get<{ Params: { id: number } }>('/:id', {
+		handler: async (req, res) => {
+			const user = await usersRepo.readById(req.params.id)
+			res.send(user)
+		},
+	})
 
-  app.patch('/:id', {
-    handler: (req, res) =>{
-        res.send({...mockUser, ...req.body!})
-    }
-  })
+	app.post<{ Body: IUser }>('/', {
+		handler: async (req, res) => {
+			const userToCreate = await usersRepo.create(req.body)
+			res.code(201).send(userToCreate)
+		},
+	})
 
-  app.delete('/:id', {
-    handler: (req, res) =>{
-        res.send({})
-    }
-  })
+	app.patch<{ Body: Partial<IUser>; Params: { id: number } }>('/:id', {
+		handler: async (req, res) => {
+			const updatedUser = await usersRepo.update(req.params.id, req.body)
+			res.send(updatedUser)
+		},
+	})
+
+	app.delete<{ Params: { id: number } }>('/:id', {
+		handler: async (req, res) => {
+			const deletedUser = await usersRepo.delete(req.params.id)
+			res.send(deletedUser)
+		},
+	})
 }
