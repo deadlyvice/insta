@@ -1,12 +1,16 @@
 import { FastifyInstance } from 'fastify'
 import { UserRepository } from './user.repository'
 import { db } from '../../config/db'
+import {
+	createUserSchema,
+	getUserByIdSchema,
+	updateUserSchema,
+} from './user.schema'
 
 export async function userRoutes(app: FastifyInstance) {
 	const usersRepo = new UserRepository(db)
 
 	app.get('/', {
-		schema: {},
 		handler: async (req, res) => {
 			const users = await usersRepo.readAll()
 			res.send(users)
@@ -14,6 +18,7 @@ export async function userRoutes(app: FastifyInstance) {
 	})
 
 	app.get<{ Params: { id: number } }>('/:id', {
+		schema: getUserByIdSchema,
 		handler: async (req, res) => {
 			const user = await usersRepo.readById(req.params.id)
 			res.send(user)
@@ -21,6 +26,7 @@ export async function userRoutes(app: FastifyInstance) {
 	})
 
 	app.post<{ Body: IUser }>('/', {
+		schema: createUserSchema,
 		handler: async (req, res) => {
 			const userToCreate = await usersRepo.create(req.body)
 			res.code(201).send(userToCreate)
@@ -28,6 +34,8 @@ export async function userRoutes(app: FastifyInstance) {
 	})
 
 	app.patch<{ Body: Partial<IUser>; Params: { id: number } }>('/:id', {
+		schema: updateUserSchema,
+
 		handler: async (req, res) => {
 			const updatedUser = await usersRepo.update(req.params.id, req.body)
 			res.send(updatedUser)

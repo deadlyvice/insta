@@ -1,11 +1,8 @@
 import { Client } from 'pg'
 
 export class UserRepository {
-	db: Client
 
-	constructor(dbClient: Client) {
-		this.db = dbClient
-	}
+	constructor(private db: Client) {}
 
 	async readById(id: number) {
 		const users = await this.db.query<IUser>(

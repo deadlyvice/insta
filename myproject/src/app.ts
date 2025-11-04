@@ -10,6 +10,7 @@ export interface AppOptions
 // Pass --options via CLI arguments in command to enable these options.
 const options: AppOptions = {
 	logger: true,
+	
 	// ajv: {
 	// 	customOptions: { coerceTypes: true },
 	// },
