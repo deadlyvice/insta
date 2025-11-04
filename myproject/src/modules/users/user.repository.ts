@@ -5,12 +5,13 @@ export class UserRepository {
 	constructor(private db: Client) {}
 
 	async readById(id: number) {
-		const users = await this.db.query<IPost>('SELECT * FROM users WHERE users.id = $1', [id])
+		const query = 'SELECT id, name, nickname, email FROM users WHERE users.id = $1'
+		const users = await this.db.query<IPost>(query, [id])
 		return users.rows
 	}
 
 	async readAll() {
-		const users = await this.db.query<IPost>('SELECT * FROM users')
+		const users = await this.db.query<IPost>('SELECT id, name, nickname, email FROM users')
 		return users.rows
 	}
 	async create(user: IPost) {
