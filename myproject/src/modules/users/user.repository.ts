@@ -34,9 +34,7 @@ export class UserRepository {
 		const setClause = keys.map((key, i) => `${key} = $${i + 2}`).join(', ')
 
 		const query = `
-			UPDATE users 
-			SET ${setClause}
-			WHERE id = $1
+			UPDATE users SET ${setClause} WHERE id = $1
 			RETURNING *;`
 
 		const result = await this.db.query<IPost>(query, [id, ...values])

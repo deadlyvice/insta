@@ -3,9 +3,11 @@ import { PostRepository } from './post.repository'
 import { db } from '../../config/db'
 import { AppError } from '../../plugins/errors'
 import { createPostSchema, getPostByIdSchema, updatePostSchema } from './post.schema'
+import { UsersPostsRepository } from './users_posts.repository'
 
 export async function postRoutes(app: FastifyInstance) {
 	const postsRepo = new PostRepository(db)
+	const usersPostsRepo = new UsersPostsRepository(db)
 
 	app.get('/', async () => {
 		const posts = await postsRepo.readAll()
@@ -19,7 +21,9 @@ export async function postRoutes(app: FastifyInstance) {
 	})
 
 	app.post<{ Body: IPost }>('/', { schema: createPostSchema }, async (req) => {
-		return await postsRepo.create(req.body)
+		const post = await postsRepo.create(req.body)
+		const result = await usersPostsRepo.createUserPost(post.author_id, post.id)
+		return { ...post, user_post: result }
 	})
 
 	app.patch<{ Params: { id: number }; Body: Partial<IPost> }>(

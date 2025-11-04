@@ -37,7 +37,7 @@ export class PostRepository {
 
 		const query = `
             UPDATE posts 
-            SET ${setClause}
+            SET ${setClause}, updated_at = NOW()
             WHERE id = $1
             RETURNING *;`
 
