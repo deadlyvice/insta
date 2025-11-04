@@ -1,14 +1,11 @@
 import { Client } from 'pg'
+import { AppError } from '../../plugins/errors'
 
 export class UserRepository {
-
 	constructor(private db: Client) {}
 
 	async readById(id: number) {
-		const users = await this.db.query<IUser>(
-			'SELECT * FROM users WHERE users.id = $1',
-			[id]
-		)
+		const users = await this.db.query<IUser>('SELECT * FROM users WHERE users.id = $1', [id])
 		return users.rows
 	}
 
@@ -24,13 +21,13 @@ export class UserRepository {
 		)
 
 		if (result.rowCount) return user
-		throw new Error('error: failed to create user')
+		throw new AppError(400, 'error: failed to create user')
 	}
 	async update(id: number, user: Partial<IUser>) {
 		const keys = Object.keys(user)
 		const values = Object.values(user)
 
-		if (keys.length === 0) throw new Error('No fields to update')
+		if (keys.length === 0) throw new AppError(400, 'No fields to update')
 
 		// parameter placeholders: $2, $3, ...
 		const setClause = keys.map((key, i) => `${key} = $${i + 2}`).join(', ')
@@ -44,7 +41,7 @@ export class UserRepository {
 		const result = await this.db.query<IUser>(query, [id, ...values])
 
 		if (result.rowCount) return result.rows[0]
-		throw new Error('ERROR: user not found or wrong req body')
+		throw new AppError(404, 'ERROR: user not found or wrong req body')
 	}
 
 	async delete(id: number) {
@@ -55,6 +52,6 @@ export class UserRepository {
 			[id]
 		)
 		if (result.rowCount) return result.rows
-		throw new Error('ERROR: user not found')
+		throw new AppError(404, 'ERROR: user not found')
 	}
 }

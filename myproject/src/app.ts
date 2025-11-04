@@ -3,23 +3,19 @@ import AutoLoad, { AutoloadPluginOptions } from '@fastify/autoload'
 import { FastifyPluginAsync, FastifyServerOptions } from 'fastify'
 import { userRoutes } from './modules/users/user.routes'
 import { connectDB } from './config/db'
+import { responseNormalizerPlugin } from './plugins/response-normalizer'
 
-export interface AppOptions
-	extends FastifyServerOptions,
-		Partial<AutoloadPluginOptions> {}
+export interface AppOptions extends FastifyServerOptions, Partial<AutoloadPluginOptions> {}
 // Pass --options via CLI arguments in command to enable these options.
 const options: AppOptions = {
 	logger: true,
-	
+
 	// ajv: {
 	// 	customOptions: { coerceTypes: true },
 	// },
 }
 
-const app: FastifyPluginAsync<AppOptions> = async (
-	fastify,
-	opts
-): Promise<void> => {
+const app: FastifyPluginAsync<AppOptions> = async (fastify, opts): Promise<void> => {
 	// Place here your custom code!
 
 	// Do not touch the following lines
@@ -41,6 +37,7 @@ const app: FastifyPluginAsync<AppOptions> = async (
 		options: opts,
 	})
 
+	await fastify.register(responseNormalizerPlugin)
 	await fastify.register(userRoutes, { prefix: '/users' })
 	connectDB()
 }

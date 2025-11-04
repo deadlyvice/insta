@@ -1,6 +1,6 @@
 import { FastifySchema } from 'fastify'
 
-const requiredIdParam = {
+const idParam = {
 	type: 'object',
 	required: ['id'],
 	properties: {
@@ -9,13 +9,14 @@ const requiredIdParam = {
 }
 
 export const getUserByIdSchema: FastifySchema = {
-	params: requiredIdParam,
+	params: idParam,
 }
 
 export const createUserSchema: FastifySchema = {
 	body: {
-		required: ['email', 'password', 'name', 'nickname'],
 		type: 'object',
+		additionalProperties: false,
+		required: ['email', 'password', 'name', 'nickname'],
 		properties: {
 			name: { type: 'string', minLength: 1 },
 			email: { type: 'string', format: 'email' },
@@ -26,15 +27,16 @@ export const createUserSchema: FastifySchema = {
 }
 
 export const updateUserSchema: FastifySchema = {
-	params: requiredIdParam,
+	params: idParam,
 	body: {
 		type: 'object',
+		minProperties: 1,
+		additionalProperties: false,
 		properties: {
 			name: { type: 'string', minLength: 1 },
 			email: { type: 'string', format: 'email' },
 			nickname: { type: 'string', minLength: 1 },
 			password: { type: 'string', minLength: 6 },
 		},
-		additionalProperties: false,
 	},
 }

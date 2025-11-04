@@ -1,51 +1,38 @@
 import { FastifyInstance } from 'fastify'
 import { UserRepository } from './user.repository'
 import { db } from '../../config/db'
-import {
-	createUserSchema,
-	getUserByIdSchema,
-	updateUserSchema,
-} from './user.schema'
+import { createUserSchema, getUserByIdSchema, updateUserSchema } from './user.schema'
+import { AppError } from '../../plugins/errors'
 
 export async function userRoutes(app: FastifyInstance) {
 	const usersRepo = new UserRepository(db)
 
-	app.get('/', {
-		handler: async (req, res) => {
-			const users = await usersRepo.readAll()
-			res.send(users)
-		},
+	app.get('/', async () => {
+		const users = await usersRepo.readAll()
+		return users
 	})
 
-	app.get<{ Params: { id: number } }>('/:id', {
-		schema: getUserByIdSchema,
-		handler: async (req, res) => {
-			const user = await usersRepo.readById(req.params.id)
-			res.send(user)
-		},
+	app.get<{ Params: { id: number } }>('/:id', { schema: getUserByIdSchema }, async (req) => {
+		const user = await usersRepo.readById(req.params.id)
+		if (!user.length) throw new AppError(404, 'ERROR: user not found')
+		return user[0]
 	})
 
-	app.post<{ Body: IUser }>('/', {
-		schema: createUserSchema,
-		handler: async (req, res) => {
-			const userToCreate = await usersRepo.create(req.body)
-			res.code(201).send(userToCreate)
-		},
+	app.post<{ Body: IUser }>('/', { schema: createUserSchema }, async (req) => {
+		return await usersRepo.create(req.body)
 	})
 
-	app.patch<{ Body: Partial<IUser>; Params: { id: number } }>('/:id', {
-		schema: updateUserSchema,
+	app.patch<{ Params: { id: number }; Body: Partial<IUser> }>(
+		'/:id',
+		{ schema: updateUserSchema },
+		async (req) => {
+			return await usersRepo.update(req.params.id, req.body)
+		}
+	)
 
-		handler: async (req, res) => {
-			const updatedUser = await usersRepo.update(req.params.id, req.body)
-			res.send(updatedUser)
-		},
-	})
-
-	app.delete<{ Params: { id: number } }>('/:id', {
-		handler: async (req, res) => {
-			const deletedUser = await usersRepo.delete(req.params.id)
-			res.send(deletedUser)
-		},
+	app.delete<{ Params: { id: number } }>('/:id', { schema: getUserByIdSchema }, async (req) => {
+		const deleted = await usersRepo.delete(req.params.id)
+		if (!deleted.length) throw new AppError(404, 'ERROR: user not found')
+		return deleted[0]
 	})
 }
