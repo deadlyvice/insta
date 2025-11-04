@@ -6,7 +6,7 @@ export async function responseNormalizerPlugin(app: FastifyInstance) {
 	// Hook for successful responses: wraps them in { ok: true, data }
 	app.addHook('preSerialization', (req, reply, payload, done) => {
 		// Check if it's a successful response and not an error
-		if (reply.statusCode >= 200 && reply.statusCode < 400) {
+		if (reply.statusCode >= 200 && reply.statusCode < 500) {
 			// Ensure the payload isn't already in the { ok: true } format
 			// This check is simple; adjust if you have payloads that naturally have `ok: true`
 			const isAlreadyFormatted = payload && typeof payload === 'object' && 'ok' in payload

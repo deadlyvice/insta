@@ -4,6 +4,7 @@ import { FastifyPluginAsync, FastifyServerOptions } from 'fastify'
 import { userRoutes } from './modules/users/user.routes'
 import { connectDB } from './config/db'
 import { responseNormalizerPlugin } from './plugins/response-normalizer'
+import { postRoutes } from './modules/posts/post.routes'
 
 export interface AppOptions extends FastifyServerOptions, Partial<AutoloadPluginOptions> {}
 // Pass --options via CLI arguments in command to enable these options.
@@ -39,6 +40,8 @@ const app: FastifyPluginAsync<AppOptions> = async (fastify, opts): Promise<void>
 
 	await fastify.register(responseNormalizerPlugin)
 	await fastify.register(userRoutes, { prefix: '/users' })
+	await fastify.register(postRoutes, { prefix: '/posts' })
+
 	connectDB()
 }
 

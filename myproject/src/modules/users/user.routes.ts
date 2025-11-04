@@ -18,11 +18,11 @@ export async function userRoutes(app: FastifyInstance) {
 		return user[0]
 	})
 
-	app.post<{ Body: IUser }>('/', { schema: createUserSchema }, async (req) => {
+	app.post<{ Body: IPost }>('/', { schema: createUserSchema }, async (req) => {
 		return await usersRepo.create(req.body)
 	})
 
-	app.patch<{ Params: { id: number }; Body: Partial<IUser> }>(
+	app.patch<{ Params: { id: number }; Body: Partial<IPost> }>(
 		'/:id',
 		{ schema: updateUserSchema },
 		async (req) => {
