@@ -9,12 +9,10 @@ interface IPost {
 	img_urls: Array<string> | string
 }
 
-type IReaction = 'like' | 'dislike' | null
-
 interface IUsersPost {
 	user_id: number
 	post_id: number
-	reaction: IReaction
+	reaction: boolean | null
 	reaction_date: string | null
 	comment: string | null
 	comment_date: string | null

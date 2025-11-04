@@ -6,15 +6,15 @@ export class UserRepository {
 
 	async readById(id: number) {
 		const query = 'SELECT id, name, nickname, email FROM users WHERE users.id = $1'
-		const users = await this.db.query<IPost>(query, [id])
+		const users = await this.db.query<IUser>(query, [id])
 		return users.rows
 	}
 
 	async readAll() {
-		const users = await this.db.query<IPost>('SELECT id, name, nickname, email FROM users')
+		const users = await this.db.query<IUser>('SELECT id, name, nickname, email FROM users')
 		return users.rows
 	}
-	async create(user: IPost) {
+	async create(user: IUser) {
 		const { name, nickname, password, email } = user
 		const result = await this.db.query<IPost>(
 			'INSERT INTO users(name, nickname, password, email) values ($1,$2,$3,$4);',

@@ -49,6 +49,7 @@ export async function postRoutes(app: FastifyInstance) {
 		'/:id/reaction',
 		//use empty object for disable reaction``
 		{ schema: postReactionSchema },
+
 		async (req) => {
 			return await usersPostsRepo.updateReaction(
 				req.params.id,

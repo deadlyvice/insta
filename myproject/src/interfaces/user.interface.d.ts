@@ -1,4 +1,4 @@
-interface IPost {
+interface IUser {
 	id: number
 	name: string
 	email: string
