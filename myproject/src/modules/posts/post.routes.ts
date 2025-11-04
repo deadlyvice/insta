@@ -2,7 +2,12 @@ import { FastifyInstance } from 'fastify'
 import { PostRepository } from './post.repository'
 import { db } from '../../config/db'
 import { AppError } from '../../plugins/errors'
-import { createPostSchema, getPostByIdSchema, updatePostSchema } from './post.schema'
+import {
+	createPostSchema,
+	getPostByIdSchema,
+	postReactionSchema,
+	updatePostSchema,
+} from './post.schema'
 import { UsersPostsRepository } from './users_posts.repository'
 
 export async function postRoutes(app: FastifyInstance) {
@@ -15,7 +20,7 @@ export async function postRoutes(app: FastifyInstance) {
 	})
 
 	app.get<{ Params: { id: number } }>('/:id', { schema: getPostByIdSchema }, async (req) => {
-		const post = await postsRepo.readById(req.params.id)
+		const post = await usersPostsRepo.getSingleUserPost(req.params.id)
 		if (!post.length) throw new AppError(404, 'ERROR: post not found')
 		return post[0]
 	})
@@ -39,4 +44,17 @@ export async function postRoutes(app: FastifyInstance) {
 		if (!deleted.length) throw new AppError(404, 'ERROR: post not found')
 		return deleted[0]
 	})
+
+	app.post<{ Params: { id: number }; Body: { reaction: IReaction } }>(
+		'/:id/reaction',
+		//use empty object for disable reaction``
+		{ schema: postReactionSchema },
+		async (req) => {
+			return await usersPostsRepo.updateReaction(
+				req.params.id,
+				req.body.reaction,
+				33 // TODO: replace with actual user ID from auth
+			)
+		}
+	)
 }

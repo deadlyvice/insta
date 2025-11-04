@@ -39,3 +39,14 @@ export const updatePostSchema: FastifySchema = {
 		},
 	},
 }
+
+export const postReactionSchema: FastifySchema = {
+	params: idParam,
+	body: {
+		type: 'object',
+		required: ['reaction'],
+		properties: {
+			reaction: { type: ['string', 'null'], enum: ['like', 'dislike', null] },
+		},
+	},
+}

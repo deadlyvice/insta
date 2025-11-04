@@ -14,4 +14,30 @@ export class UsersPostsRepository {
 		if (result.rowCount) return result.rows[0]
 		throw new AppError(404, 'user or post not found')
 	}
+
+	async getSingleUserPost(postId: number) {
+		const query = `
+			SELECT * FROM users_posts
+			--JOIN users ON users.id = users_posts.user_id
+			WHERE post_id = $1;
+		`
+		const result = await this.db.query<IUsersPost>(query, [postId])
+		return result.rows
+	}
+
+	async updateReaction(
+		postId: number,
+		reaction: IReaction = null,
+		userId: number
+	): Promise<IUsersPost> {
+		const query = `
+			UPDATE users_posts
+			SET reaction = $3
+			WHERE post_id = $2 AND user_id = $1
+			RETURNING *;
+    `
+
+		const result = await this.db.query<IUsersPost>(query, [userId, postId, reaction])
+		return result.rows[0]
+	}
 }
