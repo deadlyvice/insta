@@ -16,10 +16,11 @@ export const createPostSchema: FastifySchema = {
 	body: {
 		type: 'object',
 		additionalProperties: false,
-		required: ['title', 'content'],
+		required: ['title', 'content', 'author_id'],
 		properties: {
 			title: { type: 'string', minLength: 1 },
 			content: { type: 'string', minLength: 1 },
+			author_id: { type: 'number' },
 			img_urls: { type: 'array', maxItems: 9, items: { type: 'string' } },
 		},
 	},

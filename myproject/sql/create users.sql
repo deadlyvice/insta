@@ -1,14 +1,9 @@
--- create table users (
+ALTER TABLE public.posts
+    ADD COLUMN IF NOT EXISTS author_id integer;
 
--- 	id SERIAL PRIMARY KEY,
--- 	name CHAR(40) NOT NULL,
--- 	email CHAR(120) UNIQUE NOT NULL,
--- 	nickname CHAR(40) NOT NULL,
--- 	password CHAR (40) NOT NULL
--- );
-
--- insert into  users(name, nickname, email, password) values (
--- 	'name', 'nickname', 'abc1@example.com', '2112'
--- );
-
-SELECT FROM users *
+-- 2. Create the foreign-key constraint
+ALTER TABLE public.posts
+    ADD CONSTRAINT posts_author_id_fkey
+        FOREIGN KEY (author_id) REFERENCES public.users (id)
+        ON UPDATE NO ACTION
+        ON DELETE CASCADE;   -- or CASCADE / RESTRICT, choose what you need

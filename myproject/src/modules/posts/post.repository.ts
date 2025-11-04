@@ -15,10 +15,10 @@ export class PostRepository {
 	}
 
 	async create(post: IPost) {
-		const { title, content, img_urls } = post
+		const { title, content, img_urls, author_id } = post
 		const result = await this.db.query<IPost>(
-			'INSERT INTO posts(title,content,img_urls) values ($1,$2,$3) RETURNING *;',
-			[title, content, JSON.stringify(img_urls)]
+			'INSERT INTO posts(title,content,author_id,img_urls) values ($1,$2,$3,$4) RETURNING *;',
+			[title, content, author_id, JSON.stringify(img_urls)]
 		)
 
 		if (result.rowCount) return result.rows[0]
@@ -26,7 +26,6 @@ export class PostRepository {
 	}
 
 	async update(id: number, post: Partial<IPost>) {
-		
 		post.img_urls = JSON.stringify(post.img_urls)
 		const keys = Object.keys(post)
 		const values = Object.values(post)
