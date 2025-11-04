@@ -5,6 +5,8 @@ import { userRoutes } from './modules/users/user.routes'
 import { connectDB } from './config/db'
 import { responseNormalizerPlugin } from './plugins/response-normalizer'
 import { postRoutes } from './modules/posts/post.routes'
+import fastifyCookie from '@fastify/cookie'
+import jwt from '@fastify/jwt'
 
 export interface AppOptions extends FastifyServerOptions, Partial<AutoloadPluginOptions> {}
 // Pass --options via CLI arguments in command to enable these options.
@@ -29,7 +31,7 @@ const app: FastifyPluginAsync<AppOptions> = async (fastify, opts): Promise<void>
 		dir: join(__dirname, 'plugins'),
 		options: opts,
 	})
-	
+
 	// This loads all plugins defined in routes
 	// define your routes in one of these
 	// eslint-disable-next-line no-void
@@ -38,12 +40,23 @@ const app: FastifyPluginAsync<AppOptions> = async (fastify, opts): Promise<void>
 		options: opts,
 	})
 
+	// await fastify.register(fastifyCookie)
+	// Register cookie plugin (MUST come before routes)
+	await fastify.register(fastifyCookie, {
+		secret: process.env.COOKIE_SECRET || 'super-secret',
+	})
+
+	// Register JWT plugin
+	await fastify.register(jwt, {
+		secret: process.env.JWT_SECRET || 'super-secret-jwt',
+	})
 	await fastify.register(responseNormalizerPlugin)
+
 	await fastify.register(userRoutes, { prefix: '/users' })
 	await fastify.register(postRoutes, { prefix: '/posts' })
+	await fastify.register(postRoutes, { prefix: '/auth' })
 
 	connectDB()
 }
-
 export default app
 export { app, options }

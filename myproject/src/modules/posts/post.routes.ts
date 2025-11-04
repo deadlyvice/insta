@@ -45,7 +45,7 @@ export async function postRoutes(app: FastifyInstance) {
 		return deleted[0]
 	})
 
-	app.post<{ Params: { id: number }; Body: { reaction: IReaction } }>(
+	app.post<{ Params: { id: number }; Body: { reaction: {} } }>(
 		'/:id/reaction',
 		//use empty object for disable reaction``
 		{ schema: postReactionSchema },

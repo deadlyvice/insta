@@ -27,7 +27,7 @@ export class UsersPostsRepository {
 
 	async updateReaction(
 		postId: number,
-		reaction: IReaction = null,
+		reaction: {},
 		userId: number
 	): Promise<IUsersPost> {
 		const query = `
