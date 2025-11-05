@@ -25,14 +25,14 @@ export class UsersPostsRepository {
 		return result.rows
 	}
 
-	async updateReaction(
+	async setReaction(
 		postId: number,
-		reaction: {},
-		userId: number
+		userId: number,
+		{ reaction }: IReaction
 	): Promise<IUsersPost> {
 		const query = `
 			UPDATE users_posts
-			SET reaction = $3
+			SET reaction = $3, reaction_date = NOW()
 			WHERE post_id = $2 AND user_id = $1
 			RETURNING *;
     `

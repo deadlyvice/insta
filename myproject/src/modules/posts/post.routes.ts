@@ -45,16 +45,15 @@ export async function postRoutes(app: FastifyInstance) {
 		return deleted[0]
 	})
 
-	app.post<{ Params: { id: number }; Body: { reaction: {} } }>(
+	app.post<{ Params: { id: number }; Body: IReaction }>(
 		'/:id/reaction',
-		//use empty object for disable reaction``
 		{ schema: postReactionSchema },
 
 		async (req) => {
-			return await usersPostsRepo.updateReaction(
+			return await usersPostsRepo.setReaction(
 				req.params.id,
-				req.body.reaction,
-				33 // TODO: replace with actual user ID from auth
+				33, // TODO: replace with actual user ID from auth
+				req.body
 			)
 		}
 	)

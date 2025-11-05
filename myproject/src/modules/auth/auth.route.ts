@@ -1,7 +1,7 @@
 import { FastifyInstance, FastifySchema } from 'fastify'
 // import { UserRepository } from './user.repository'
 import { db } from '../../config/db'
-import { AppError } from '../../plugins/errors'
+// import { AppError } from '../../plugins/errors'
 import { AuthRepository } from './auth.repository'
 // add login and register route.
 // use JWT token. set this token into cookie header.

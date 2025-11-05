@@ -46,7 +46,7 @@ export const postReactionSchema: FastifySchema = {
 		type: 'object',
 		required: ['reaction'],
 		properties: {
-			reaction: { type: ['string', 'null'], enum: ['like', 'dislike', null] },
+			reaction: { type: ['boolean', 'null'] },
 		},
 	},
 }
