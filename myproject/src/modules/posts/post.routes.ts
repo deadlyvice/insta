@@ -9,25 +9,29 @@ import {
 	updatePostSchema,
 } from './post.schema'
 import { UsersPostsRepository } from './users_posts.repository'
+import { protect } from '../auth/auth.utils'
 
-export async function postRoutes(app: FastifyInstance) {
-	const postsRepo = new PostRepository(db)
-	const usersPostsRepo = new UsersPostsRepository(db)
+const posts = new PostRepository(db)
+const users = new UsersPostsRepository(db)
 
+export async function publicPosts(app: FastifyInstance) {
 	app.get('/', async () => {
-		const posts = await postsRepo.readAll()
-		return posts
+		return posts.readAll()
 	})
 
 	app.get<{ Params: { id: number } }>('/:id', { schema: getPostByIdSchema }, async (req) => {
-		const post = await usersPostsRepo.getSingleUserPost(req.params.id)
+		const post = await users.getSingleUserPost(req.params.id)
 		if (!post.length) throw new AppError(404, 'ERROR: post not found')
 		return post[0]
 	})
+}
+
+export async function privatePosts(app: FastifyInstance) {
+	await protect(app)
 
 	app.post<{ Body: IPost }>('/', { schema: createPostSchema }, async (req) => {
-		const post = await postsRepo.create(req.body)
-		const result = await usersPostsRepo.createUserPost(post.author_id, post.id)
+		const post = await posts.create(req.body)
+		const result = await users.createUserPost(post.author_id, post.id)
 		return { ...post, user_post: result }
 	})
 
@@ -35,12 +39,12 @@ export async function postRoutes(app: FastifyInstance) {
 		'/:id',
 		{ schema: updatePostSchema },
 		async (req) => {
-			return await postsRepo.update(req.params.id, req.body)
+			return await posts.update(req.params.id, req.body)
 		}
 	)
 
 	app.delete<{ Params: { id: number } }>('/:id', { schema: getPostByIdSchema }, async (req) => {
-		const deleted = await postsRepo.delete(req.params.id)
+		const deleted = await posts.delete(req.params.id)
 		if (!deleted.length) throw new AppError(404, 'ERROR: post not found')
 		return deleted[0]
 	})
@@ -50,7 +54,7 @@ export async function postRoutes(app: FastifyInstance) {
 		{ schema: postReactionSchema },
 
 		async (req) => {
-			return await usersPostsRepo.setReaction(
+			return await users.setReaction(
 				req.params.id,
 				33, // TODO: replace with actual user ID from auth
 				req.body
