@@ -50,3 +50,27 @@ export const postReactionSchema: FastifySchema = {
 		},
 	},
 }
+
+export const createCommentShema: FastifySchema = {
+	body: {
+		type: 'object',
+		additionalProperties: false,
+		required: ['post_id', 'user_id', 'data'],
+		properties: {
+			data: { type: 'string', minLength: 1 },
+			post_id: { type: 'number' },
+			user_id: { type: 'number' },
+		},
+	},
+}
+
+export const updateCommentShema: FastifySchema = {
+	body: {
+		type: 'object',
+		additionalProperties: false,
+		required: ['data'],
+		properties: {
+			data: { type: 'string', minLength: 1 },
+		},
+	},
+}
