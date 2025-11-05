@@ -7,6 +7,7 @@ import { responseNormalizerPlugin } from './plugins/response-normalizer'
 import { postRoutes } from './modules/posts/post.routes'
 import fastifyCookie from '@fastify/cookie'
 import jwt from '@fastify/jwt'
+import { authRouters } from './modules/auth/auth.route'
 
 export interface AppOptions extends FastifyServerOptions, Partial<AutoloadPluginOptions> {}
 // Pass --options via CLI arguments in command to enable these options.
@@ -54,7 +55,7 @@ const app: FastifyPluginAsync<AppOptions> = async (fastify, opts): Promise<void>
 
 	await fastify.register(userRoutes, { prefix: '/users' })
 	await fastify.register(postRoutes, { prefix: '/posts' })
-	await fastify.register(postRoutes, { prefix: '/auth' })
+	await fastify.register(authRouters, { prefix: '/auth' })
 
 	connectDB()
 }

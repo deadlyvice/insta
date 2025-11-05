@@ -12,19 +12,6 @@ export const getUserByIdSchema: FastifySchema = {
 	params: idParam,
 }
 
-export const createUserSchema: FastifySchema = {
-	body: {
-		type: 'object',
-		additionalProperties: false,
-		required: ['email', 'password', 'name', 'nickname'],
-		properties: {
-			name: { type: 'string', minLength: 1 },
-			email: { type: 'string', format: 'email' },
-			nickname: { type: 'string', minLength: 1 },
-			password: { type: 'string', minLength: 6 },
-		},
-	},
-}
 
 export const updateUserSchema: FastifySchema = {
 	params: idParam,

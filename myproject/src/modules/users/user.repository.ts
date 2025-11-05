@@ -14,16 +14,7 @@ export class UserRepository {
 		const users = await this.db.query<IUser>('SELECT id, name, nickname, email FROM users')
 		return users.rows
 	}
-	async create(user: IUser) {
-		const { name, nickname, password, email } = user
-		const result = await this.db.query<IPost>(
-			'INSERT INTO users(name, nickname, password, email) values ($1,$2,$3,$4);',
-			[name, nickname, password, email]
-		)
 
-		if (result.rowCount) return user
-		throw new AppError(400, 'error: failed to create user')
-	}
 	async update(id: number, user: Partial<IPost>) {
 		const keys = Object.keys(user)
 		const values = Object.values(user)
