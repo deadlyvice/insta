@@ -1,12 +1,12 @@
 import { Client } from 'pg'
 import { AppError } from '../../plugins/errors'
 
-export class UsersPostsRepository {
+export class ReactionsRepository {
 	constructor(private db: Client) {}
 
 	async createUserPost(authorId: number, postId: number) {
 		const query = `
-			INSERT INTO users_posts (user_id, post_id)
+			INSERT INTO reactions (user_id, post_id)
 			VALUES ($1, $2)
 			RETURNING *;
 		`
@@ -17,8 +17,8 @@ export class UsersPostsRepository {
 
 	async getSingleUserPost(postId: number) {
 		const query = `
-			SELECT * FROM users_posts
-			--JOIN users ON users.id = users_posts.user_id
+			SELECT * FROM reactions
+			--JOIN users ON users.id = reactions.user_id
 			WHERE post_id = $1;
 		`
 		const result = await this.db.query<IUsersPost>(query, [postId])
@@ -31,7 +31,7 @@ export class UsersPostsRepository {
 		{ reaction }: IReaction
 	): Promise<IUsersPost> {
 		const query = `
-			UPDATE users_posts
+			UPDATE reactions
 			SET reaction = $3, reaction_date = NOW()
 			WHERE post_id = $2 AND user_id = $1
 			RETURNING *;

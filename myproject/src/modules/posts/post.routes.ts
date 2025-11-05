@@ -8,11 +8,11 @@ import {
 	postReactionSchema,
 	updatePostSchema,
 } from './post.schema'
-import { UsersPostsRepository } from './users_posts.repository'
+import { ReactionsRepository } from './reactions.repository'
 import { protect } from '../auth/auth.utils'
 
 const posts = new PostRepository(db)
-const users = new UsersPostsRepository(db)
+const users = new ReactionsRepository(db)
 
 export async function publicPosts(app: FastifyInstance) {
 	app.get('/', async () => {
@@ -52,13 +52,8 @@ export async function privatePosts(app: FastifyInstance) {
 	app.post<{ Params: { id: number }; Body: IReaction }>(
 		'/:id/reaction',
 		{ schema: postReactionSchema },
-
-		async (req) => {
-			return await users.setReaction(
-				req.params.id,
-				33, // TODO: replace with actual user ID from auth
-				req.body
-			)
+		async (req, res) => {
+			return users.setReaction(req.params.id, req.user.id, req.body)
 		}
 	)
 }

@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS posts (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE TABLE IF NOT EXISTS users_posts (
+CREATE TABLE IF NOT EXISTS reactions (
     user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     post_id INTEGER NOT NULL REFERENCES posts(id) ON DELETE CASCADE,
     
@@ -28,6 +28,6 @@ CREATE TABLE IF NOT EXISTS users_posts (
         CHECK (comment IS NULL OR comment_date IS NOT NULL)
 );
 
-CREATE INDEX idx_users_posts_post_id ON users_posts(post_id);
-CREATE INDEX idx_users_posts_reaction ON users_posts(reaction);
-CREATE INDEX idx_users_posts_reaction_date ON users_posts(reaction_date);
+CREATE INDEX idx_reactions_post_id ON reactions(post_id);
+CREATE INDEX idx_reactions_reaction ON reactions(reaction);
+CREATE INDEX idx_reactions_reaction_date ON reactions(reaction_date);

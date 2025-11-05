@@ -56,10 +56,10 @@ $$ LANGUAGE plpgsql;
 -- ===========================================================
 -- Trigger: call function after insert/update/delete
 -- ===========================================================
-DROP TRIGGER IF EXISTS trg_update_post_reactions ON public.users_posts;
+DROP TRIGGER IF EXISTS trg_update_post_reactions ON public.reactions;
 
 CREATE TRIGGER trg_update_post_reactions
 AFTER INSERT OR UPDATE OR DELETE
-ON public.users_posts
+ON public.reactions
 FOR EACH ROW
 EXECUTE FUNCTION public.update_post_reactions();
